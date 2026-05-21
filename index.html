@@ -273,7 +273,7 @@
   <header>
     <div class="eyebrow">Personal Prototype &nbsp;&middot;&nbsp; Process Design Exercise</div>
     <h1>Medicare Questions, <span class="alt">answered plainly.</span></h1>
-    <p class="lede">A prototype assistant that answers the ten questions people most often ask when first shopping for Medicare coverage — each answer drawn from a vetted, sourced knowledge base.</p>
+    <p class="lede">A prototype assistant that answers twenty common questions about getting started with Medicare — each answer drawn from a vetted, sourced knowledge base.</p>
     <div class="disclaimer">
       <strong>Not affiliated with Medicare, CMS, or any insurer.</strong> This is a personal demonstration project. Medicare figures change annually; answers reflect 2026 program amounts. Always confirm details at <a href="https://www.medicare.gov" target="_blank" rel="noopener">Medicare.gov</a> or 1-800-MEDICARE before making decisions.
     </div>
@@ -318,25 +318,25 @@
 const KB = [
   {
     q: "What are the parts of Medicare?",
-    keys: ["parts","part a","part b","part c","part d","abcd","what is medicare"],
+    keys: ["parts of medicare","medicare parts","what is medicare","abcd","four parts"],
     a: "Medicare has four parts. Part A covers inpatient hospital, skilled nursing, hospice, and some home health care. Part B covers doctor visits, outpatient care, and preventive services. Part C (Medicare Advantage) is a private-plan alternative that bundles A and B, often with extra benefits. Part D covers prescription drugs.",
     src: "Medicare.gov — What's Medicare?"
   },
   {
     q: "When can I first sign up for Medicare?",
-    keys: ["when sign up","initial enrollment","first eligible","turning 65","iep","when can i enroll"],
+    keys: ["when sign up","initial enrollment","first eligible","turning 65","iep","when can i enroll","when do i sign up","when am i eligible"],
     a: "Most people sign up during their Initial Enrollment Period — a 7-month window that starts 3 months before the month you turn 65, includes your birthday month, and ends 3 months after. Signing up in the first 3 months avoids a gap, so coverage can begin the month you turn 65.",
     src: "Medicare.gov — When to sign up"
   },
   {
     q: "What does Part B cost in 2026?",
-    keys: ["part b cost","part b premium","b premium","cost of part b","monthly premium","deductible"],
+    keys: ["part b cost","part b premium","b premium","cost of part b","monthly premium","part b deductible","how much is part b","how much does part b cost","how much for part b","what does part b cost","price of part b","part b monthly","part b price"],
     a: "In 2026 the standard Part B premium is $202.90 per month, and the annual Part B deductible is $283. Higher-income beneficiaries pay more through an income-related adjustment (IRMAA) based on tax returns from two years earlier.",
     src: "CMS — 2026 Medicare Parts A & B Premiums & Deductibles"
   },
   {
     q: "Is Part A really free?",
-    keys: ["part a free","free part a","part a cost","part a premium","premium-free"],
+    keys: ["part a free","free part a","part a cost","part a premium","premium-free","part a deductible","hospital deductible"],
     a: "Most people pay no premium for Part A because they (or a spouse) paid Medicare taxes for at least 40 quarters of work. If you have fewer quarters, you can still buy Part A — in 2026 that runs $311 per month with 30–39 quarters, or $565 per month with fewer than 30. Part A also has a deductible of $1,736 per hospital benefit period in 2026.",
     src: "CMS — 2026 Medicare Parts A & B Premiums & Deductibles"
   },
@@ -348,19 +348,19 @@ const KB = [
   },
   {
     q: "What's the difference between Medicare Advantage and Original Medicare?",
-    keys: ["advantage","original medicare","part c","difference between","medigap or advantage","ma plan"],
+    keys: ["advantage vs original","original medicare","part c","difference between","medigap or advantage","ma plan","advantage or original"],
     a: "Original Medicare is Parts A and B run by the federal government; you can add a separate Part D drug plan and a Medigap supplement. Medicare Advantage (Part C) is offered by private insurers, usually bundles drug coverage and extras like dental or vision, but typically uses provider networks and requires referrals or prior authorization. It's a trade-off between flexibility and bundled convenience.",
     src: "Medicare.gov — Your coverage options"
   },
   {
     q: "Do I need Part D if I don't take medications?",
-    keys: ["part d","drug coverage","prescription","need part d","dont take medication","drug plan"],
+    keys: ["need part d","dont take medication","don't take medication","skip part d","why part d","part d no drugs"],
     a: "It's usually wise to enroll in Part D (or have other creditable drug coverage) when first eligible, even with no current prescriptions. If you go 63 days or more without creditable coverage, a permanent late enrollment penalty is added to your future drug premium. Enrolling early protects against both unexpected prescriptions and that penalty.",
     src: "Medicare.gov — Part D late enrollment penalty"
   },
   {
     q: "Can I keep Medicare if I'm still working at 65?",
-    keys: ["still working","employer coverage","working at 65","keep my insurance","job insurance","delay medicare"],
+    keys: ["still working","employer coverage","working at 65","keep my insurance","job insurance","delay medicare","work past 65"],
     a: "Often yes. If you have group health coverage through your own or a spouse's active employment, you may be able to delay Part B without penalty and use a Special Enrollment Period later. Rules differ by employer size, so confirm with your benefits administrator. Many people still take premium-free Part A even while working.",
     src: "Medicare.gov — Working past 65"
   },
@@ -375,6 +375,66 @@ const KB = [
     keys: ["dental","vision","hearing","glasses","eye exam","teeth","hearing aid"],
     a: "Original Medicare generally does not cover routine dental, vision, or hearing care, though it covers some medically necessary related services. Many Medicare Advantage plans include these extras, and standalone dental or vision plans are also available. Coverage varies widely, so check the specific plan's benefits.",
     src: "Medicare.gov — What Medicare covers"
+  },
+  {
+    q: "How does income affect my premium? (IRMAA)",
+    keys: ["irmaa","income related","income adjustment","high income","income surcharge","extra premium","magi","part b income","part d income","income premium"],
+    a: "If your income is above set thresholds, you pay an Income-Related Monthly Adjustment Amount (IRMAA) on top of your standard Part B and Part D premiums — about 8% of Part B enrollees do. Social Security uses tax returns from two years earlier (2024 returns set 2026 premiums). The first 2026 bracket starts above $109,000 single or $218,000 joint, where total Part B rises to $284.10/mo. The top bracket — $500,000+ single or $750,000+ joint — pays $689.90/mo for Part B plus a $91.00 Part D add-on.",
+    src: "CMS — 2026 Medicare Parts A & B Premiums and Deductibles (Nov 14, 2025)"
+  },
+  {
+    q: "How do I actually enroll in Medicare?",
+    keys: ["how do i enroll","how to enroll","how do i sign up","enrollment process","apply for medicare","enroll online","enroll in medicare","social security medicare"],
+    a: "Most people enroll through Social Security — online at ssa.gov/medicare, by phone at 1-800-772-1213, or in person at a local Social Security office. If you're already collecting Social Security or Railroad Retirement before 65, you're enrolled automatically in Parts A and B and receive a card about 3 months before your 65th birthday. To add Medicare Advantage (Part C) or a stand-alone Part D drug plan, you choose a plan separately through Medicare.gov or directly with a private insurer.",
+    src: "SSA — Apply for Medicare"
+  },
+  {
+    q: "When can I change plans? (Annual Election Period)",
+    keys: ["change plans","annual election","aep","open enrollment","switch plans","october 15","december 7","change medicare advantage","switch medicare"],
+    a: "The Medicare Annual Election Period runs October 15 through December 7 each year. During this window you can switch between Original Medicare and Medicare Advantage, change Medicare Advantage plans, join or change a Part D drug plan, or drop Part D. Changes take effect January 1. There's also a Medicare Advantage Open Enrollment Period (January 1 – March 31) when MA enrollees can switch to another MA plan or back to Original Medicare once. Special Enrollment Periods exist for qualifying life events.",
+    src: "Medicare.gov — When can I join, switch, or drop a plan?"
+  },
+  {
+    q: "How much does Part D cost?",
+    keys: ["part d cost","part d premium","prescription cost","drug plan cost","how much is part d","cost of part d","drug coverage cost","part d price"],
+    a: "Part D premiums vary by plan and region — the 2026 national base beneficiary premium (used for late-enrollment penalty calculations) is $38.99 per month, but actual plan premiums can be higher or lower. Many plans also have a deductible and copays. Beginning in 2025, a member's annual out-of-pocket Part D spending is capped — that cap is $2,100 for 2026. After hitting it, covered drugs cost $0 for the rest of the year. Higher-income beneficiaries pay an additional IRMAA surcharge on Part D.",
+    src: "CMS — 2026 Part D Bid Information & Final Part D Redesign Program Instructions"
+  },
+  {
+    q: "What is the Part D coverage gap (donut hole)?",
+    keys: ["donut hole","doughnut hole","coverage gap","part d gap","prescription gap","drug gap"],
+    a: "The Part D coverage gap (the \"donut hole\") was eliminated effective 2025 under the Inflation Reduction Act. Standard Part D coverage now has three phases — deductible, initial coverage, and catastrophic — with no separate gap phase. Instead, members have a flat annual out-of-pocket cap on covered drugs: $2,100 in 2026. Once a member reaches that cap, covered drugs cost $0 for the rest of the calendar year.",
+    src: "CMS — Medicare Part D Improvements (Inflation Reduction Act)"
+  },
+  {
+    q: "What is Extra Help (LIS) for drug costs?",
+    keys: ["extra help","lis","low income subsidy","help with drug cost","medicare subsidy","prescription help","drug subsidy"],
+    a: "Extra Help (also called the Low-Income Subsidy or LIS) is a federal program that pays much or all of a member's Part D premiums, deductible, and copays. Eligibility requires income below 150% of the Federal Poverty Level and resources within the 2026 limits of $16,590 (single) or $33,100 (married). Applications go through Social Security at ssa.gov/medicare/part-d-extra-help. Many people who qualify don't apply, so it's worth checking.",
+    src: "SSA — Apply for Medicare Part D Extra Help"
+  },
+  {
+    q: "Can I have both Medicare and Medicaid?",
+    keys: ["medicaid","dual eligible","dual eligibility","medicare and medicaid","both medicare","qmb","medicare savings program","msp"],
+    a: "Yes — people enrolled in both are called \"dually eligible.\" Medicare pays first for covered services, and Medicaid can help with premiums, deductibles, and benefits Medicare doesn't cover (often including long-term care). Medicare Savings Programs — QMB, SLMB, and QI — can also help pay Part B premiums and cost-sharing for people who qualify but aren't on full Medicaid. Medicaid eligibility is set by each state.",
+    src: "Medicare.gov — Medicare Savings Programs"
+  },
+  {
+    q: "HMO or PPO Medicare Advantage — what's the difference?",
+    keys: ["hmo","ppo","hmo vs ppo","network plan","medicare advantage type","out of network","ma plan type","advantage network"],
+    a: "Both are Medicare Advantage plan types. HMO plans typically require you to use providers in the plan's network and to choose a primary care provider who coordinates referrals — out-of-network care is usually not covered except for emergencies. PPO plans let you see out-of-network providers at a higher cost-share and usually don't require referrals. HMOs are often less expensive monthly but more restrictive; PPOs offer more flexibility for a higher price.",
+    src: "Medicare.gov — Compare Medicare Advantage plans"
+  },
+  {
+    q: "Does Medicare cover long-term care or nursing-home stays?",
+    keys: ["long term care","long-term care","nursing home","custodial care","assisted living","nursing facility","ltc","skilled nursing"],
+    a: "Generally no for ongoing custodial care. Medicare covers a limited skilled-nursing benefit — up to 100 days per benefit period after a qualifying inpatient hospital stay, with daily copays beginning day 21 ($217/day in 2026). It does not pay for long-term custodial care, assisted living, or ongoing nursing-home stays. Those costs are typically covered by private long-term care insurance, Medicaid, or out-of-pocket spending.",
+    src: "Medicare.gov — Skilled nursing facility care"
+  },
+  {
+    q: "What if I'm under 65 and have a disability?",
+    keys: ["under 65","disability","ssdi","disabled","als","esrd","kidney","disability medicare","lou gehrig"],
+    a: "People under 65 qualify for Medicare automatically after 24 months of Social Security Disability Insurance (SSDI) payments. Two conditions waive the 24-month wait: ALS (Lou Gehrig's disease) — Medicare begins the same month SSDI starts — and End-Stage Renal Disease (ESRD), which has its own enrollment rules. Once enrolled, coverage is the same Part A and Part B benefit available to people age 65.",
+    src: "Medicare.gov — Medicare before 65 / SSA — Disability and Medicare"
   }
 ];
 

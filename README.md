@@ -1,6 +1,6 @@
 # Medicare Questions Assistant — Prototype
 
-A prototype Q&A assistant that answers the ten questions people most commonly ask when first shopping for Medicare coverage. Built as a personal exercise in **scoping a member-facing process**, not just a chatbot demo.
+A prototype Q&A assistant that answers twenty common questions people ask when first shopping for Medicare coverage. Built as a personal exercise in **scoping a member-facing process**, not just a chatbot demo.
 
 **Live demo:** [mburns2992.github.io/medicare-questions-assistant](https://mburns2992.github.io/medicare-questions-assistant/)
 
