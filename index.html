@@ -327,7 +327,7 @@ const KB = [
   },
   {
     q: "When can I first sign up for Medicare?",
-    keys: ["when sign up","initial enrollment","first eligible","turning 65","iep","when can i enroll","when do i sign up","when am i eligible"],
+    keys: ["when can i first sign up","when can i sign up","when do i sign up","sign up for medicare","when first sign up","when sign up","initial enrollment","first eligible","turning 65","iep","when can i enroll","when am i eligible","when do i become eligible"],
     a: "Most people sign up during their Initial Enrollment Period — a 7-month window that starts 3 months before the month you turn 65, includes your birthday month, and ends 3 months after. Signing up in the first 3 months avoids a gap, so coverage can begin the month you turn 65.",
     src: "Medicare.gov — When to sign up"
   },
@@ -339,7 +339,7 @@ const KB = [
   },
   {
     q: "Is Part A really free?",
-    keys: ["part a free","free part a","part a cost","part a premium","premium-free","part a deductible","hospital deductible"],
+    keys: ["is part a really free","part a really free","is part a free","part a free","free part a","part a cost","part a premium","premium-free","part a deductible","hospital deductible","do i pay for part a","does part a cost"],
     a: "Most people pay no premium for Part A because they (or a spouse) paid Medicare taxes for at least 40 quarters of work. If you have fewer quarters, you can still buy Part A — in 2026 that runs $311 per month with 30–39 quarters, or $565 per month with fewer than 30. Part A also has a deductible of $1,736 per hospital benefit period in 2026.",
     src: "CMS — 2026 Medicare Parts A & B Premiums & Deductibles"
   },
@@ -490,12 +490,14 @@ function addMsg(text, who, src, escalate) {
   stream.scrollTop = stream.scrollHeight;
 }
 
-function ask(text) {
+function ask(text, entry) {
   if (!text.trim()) return;
   // Show only the latest question + answer; clear any prior exchange.
   stream.innerHTML = "";
   addMsg(text, "user");
-  const r = findAnswer(text);
+  // Chip clicks pass the entry directly (no keyword guess needed).
+  // Free-text input routes through the keyword matcher.
+  const r = entry || findAnswer(text);
   setTimeout(() => addMsg(r.a, "bot", r.src, r.esc), 320);
 }
 
@@ -503,7 +505,7 @@ KB.forEach(entry => {
   const c = document.createElement("button");
   c.className = "chip";
   c.textContent = entry.q;
-  c.onclick = () => ask(entry.q);
+  c.onclick = () => ask(entry.q, entry);
   chips.appendChild(c);
 });
 
