@@ -252,16 +252,50 @@
   }
   .kpi .n {
     font-family: 'Fraunces', serif;
-    font-size: 1.5rem;
+    font-size: 1.85rem;
     color: var(--accent);
     line-height: 1;
+    font-weight: 600;
+  }
+  .kpi .n.off {
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--ink-soft);
   }
   .kpi .l {
     font-size: 0.74rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--ink-soft);
-    margin-top: 5px;
+    margin-top: 6px;
+  }
+  .kpi-meta {
+    margin-top: 14px;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .kpi-meta .count { font-weight: 500; }
+  .kpi-meta button {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.74rem;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .kpi-meta button:hover { color: var(--red); border-color: var(--red); }
+  .kpi-note {
+    margin-top: 8px;
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    font-style: italic;
   }
 
   @media (max-width: 560px) {
@@ -304,10 +338,24 @@
     <p>Answers are <strong>not generated live by an AI model</strong>. Each is a pre-written, human-vetted entry tied to a published source — a deliberate control, since an incorrect Medicare answer carries real cost to a member. Incoming questions are matched to the knowledge base by keyword; when no answer clears the confidence threshold, the assistant <strong>escalates to a licensed human</strong> rather than guessing.</p>
     <p>This mirrors how a process owner would scope such a tool: a defined intake, an explicit knowledge base, a control for low-confidence cases, and measurable outcomes.</p>
     <div class="kpi-row">
-      <div class="kpi"><div class="n">Deflection</div><div class="l">% resolved without a human</div></div>
-      <div class="kpi"><div class="n">Accuracy</div><div class="l">answers vs. CMS source review</div></div>
-      <div class="kpi"><div class="n">Escalation</div><div class="l">% routed to a licensed agent</div></div>
+      <div class="kpi">
+        <div class="n" id="kpi-deflect">—</div>
+        <div class="l">Deflection — answered w/o a human</div>
+      </div>
+      <div class="kpi">
+        <div class="n off" id="kpi-accuracy">offline review</div>
+        <div class="l">Accuracy — sampled vs. CMS source</div>
+      </div>
+      <div class="kpi">
+        <div class="n" id="kpi-escalate">—</div>
+        <div class="l">Escalation — routed to licensed agent</div>
+      </div>
     </div>
+    <div class="kpi-meta">
+      <span class="count" id="kpi-count">No questions yet — click a chip or type one above</span>
+      <button id="kpi-reset" type="button">Reset counters</button>
+    </div>
+    <p class="kpi-note">Deflection and Escalation aggregate questions from this browser only — production KPIs would aggregate across all members via server-side telemetry. Accuracy is an offline review process (sample of answers spot-checked against current CMS / Medicare.gov source material, typically quarterly).</p>
   </div>
 
 </div>
@@ -490,6 +538,49 @@ function addMsg(text, who, src, escalate) {
   stream.scrollTop = stream.scrollHeight;
 }
 
+/* ---------- KPI logging (per-browser, localStorage) ---------- */
+const KPI_KEY = "mqa_kpi_v1";
+const KPI = {
+  load() {
+    try {
+      const raw = localStorage.getItem(KPI_KEY);
+      return raw ? JSON.parse(raw) : { answered: 0, escalated: 0 };
+    } catch (e) { return { answered: 0, escalated: 0 }; }
+  },
+  save(s) {
+    try { localStorage.setItem(KPI_KEY, JSON.stringify(s)); } catch (e) {}
+  },
+  log(escalated) {
+    const s = this.load();
+    if (escalated) s.escalated++; else s.answered++;
+    this.save(s);
+    this.render();
+  },
+  reset() {
+    try { localStorage.removeItem(KPI_KEY); } catch (e) {}
+    this.render();
+  },
+  render() {
+    const s = this.load();
+    const total = s.answered + s.escalated;
+    const d = document.getElementById("kpi-deflect");
+    const e = document.getElementById("kpi-escalate");
+    const c = document.getElementById("kpi-count");
+    if (!d || !e || !c) return;
+    if (total === 0) {
+      d.textContent = "—";
+      e.textContent = "—";
+      c.textContent = "No questions yet — click a chip or type one above";
+    } else {
+      d.textContent = Math.round((s.answered / total) * 100) + "%";
+      e.textContent = Math.round((s.escalated / total) * 100) + "%";
+      c.textContent = total + " question" + (total === 1 ? "" : "s") +
+                      " logged on this device — " + s.answered + " answered, " +
+                      s.escalated + " escalated";
+    }
+  }
+};
+
 function ask(text, entry) {
   if (!text.trim()) return;
   // Show only the latest question + answer; clear any prior exchange.
@@ -498,6 +589,7 @@ function ask(text, entry) {
   // Chip clicks pass the entry directly (no keyword guess needed).
   // Free-text input routes through the keyword matcher.
   const r = entry || findAnswer(text);
+  KPI.log(!!r.esc);
   setTimeout(() => addMsg(r.a, "bot", r.src, r.esc), 320);
 }
 
@@ -516,6 +608,11 @@ document.getElementById("sendBtn").onclick = () => {
 input.addEventListener("keydown", e => {
   if (e.key === "Enter") { ask(input.value); input.value = ""; }
 });
+
+/* Reset button + initial render of KPI cards */
+const kpiResetBtn = document.getElementById("kpi-reset");
+if (kpiResetBtn) kpiResetBtn.addEventListener("click", () => KPI.reset());
+KPI.render();
 </script>
 </body>
 </html>
