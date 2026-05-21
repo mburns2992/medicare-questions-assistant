@@ -2,7 +2,7 @@
 
 A prototype Q&A assistant that answers the ten questions people most commonly ask when first shopping for Medicare coverage. Built as a personal exercise in **scoping a member-facing process**, not just a chatbot demo.
 
-**Live demo:** _(enable GitHub Pages on this repo, then link `index.html` here)_
+**Live demo:** [mburns2992.github.io/medicare-questions-assistant](https://mburns2992.github.io/medicare-questions-assistant/)
 
 > **Not affiliated with Medicare, CMS, or any insurer.** This is a personal demonstration project built on publicly available Medicare information. Medicare program amounts change every year; answers reflect 2026 figures from CMS / Medicare.gov releases. Always verify at [Medicare.gov](https://www.medicare.gov) or 1-800-MEDICARE.
 
