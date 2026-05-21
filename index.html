@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medicare Questions Assistant — Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Newsreader:ital,opsz@0,6..72;1,6..72&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c2b33;
+    --ink-soft: #4a5a62;
+    --paper: #f4f1ea;
+    --card: #fbfaf6;
+    --line: #d9d3c5;
+    --accent: #1f5c5a;
+    --accent-soft: #e3ece9;
+    --gold: #b07d33;
+    --bot: #eef1ee;
+    --user: #1f5c5a;
+    --flag: #8a5a1c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 20px 64px;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    padding: 44px 0 26px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 0;
+  }
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 2.55rem;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  h1 .alt { font-style: italic; color: var(--accent); }
+  .lede {
+    font-family: 'Newsreader', serif;
+    font-size: 1.12rem;
+    color: var(--ink-soft);
+    max-width: 56ch;
+  }
+
+  /* ---------- Disclaimer ---------- */
+  .disclaimer {
+    margin-top: 22px;
+    background: #fdf6e9;
+    border: 1px solid #e6cfa3;
+    border-left: 3px solid var(--gold);
+    padding: 13px 16px;
+    font-size: 0.84rem;
+    color: var(--flag);
+    border-radius: 2px;
+  }
+  .disclaimer strong { font-weight: 600; }
+
+  /* ---------- Chat ---------- */
+  .chat-shell {
+    margin-top: 28px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 0 #fff inset, 0 8px 28px -18px rgba(28,43,51,0.4);
+  }
+  .chat-bar {
+    background: var(--ink);
+    color: #f4f1ea;
+    padding: 11px 18px;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #5fae8a;
+    box-shadow: 0 0 0 3px rgba(95,174,138,0.25);
+  }
+  .stream {
+    padding: 22px 18px 8px;
+    max-height: 380px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .msg { display: flex; }
+  .msg.user { justify-content: flex-end; }
+  .bubble {
+    max-width: 86%;
+    padding: 11px 15px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+  }
+  .msg.bot .bubble {
+    background: var(--bot);
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
+  }
+  .msg.user .bubble {
+    background: var(--user);
+    color: #f4f1ea;
+    border-bottom-right-radius: 4px;
+  }
+  .bubble .src {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.74rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .bubble .src a { color: var(--accent); }
+  .bubble.escalate {
+    background: #fdf6e9;
+    border-color: #e6cfa3;
+  }
+  .bubble.escalate .esc-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--flag);
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+
+  /* ---------- Question chips ---------- */
+  .prompt-zone {
+    border-top: 1px solid var(--line);
+    padding: 16px 18px 20px;
+    background: #f7f4ec;
+  }
+  .prompt-label {
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 11px;
+    font-weight: 600;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.85rem;
+    background: #fff;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 7px 13px;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .chip:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .input-row input {
+    flex: 1;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.92rem;
+    padding: 10px 13px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--ink);
+  }
+  .input-row input:focus {
+    outline: 2px solid var(--accent-soft);
+    border-color: var(--accent);
+  }
+  .input-row button {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: var(--ink);
+    color: #f4f1ea;
+    border: none;
+    padding: 0 18px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .input-row button:hover { background: var(--accent); }
+
+  /* ---------- Footer note ---------- */
+  .meta {
+    margin-top: 34px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+  .meta h2 {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .meta p { margin-bottom: 9px; }
+  .meta a { color: var(--accent); }
+  .kpi-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 6px;
+  }
+  .kpi {
+    flex: 1;
+    min-width: 150px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 12px 14px;
+  }
+  .kpi .n {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .kpi .l {
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    margin-top: 5px;
+  }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 2rem; }
+    .bubble { max-width: 92%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Personal Prototype &nbsp;&middot;&nbsp; Process Design Exercise</div>
+    <h1>Medicare Questions, <span class="alt">answered plainly.</span></h1>
+    <p class="lede">A prototype assistant that answers the ten questions people most often ask when first shopping for Medicare coverage — each answer drawn from a vetted, sourced knowledge base.</p>
+    <div class="disclaimer">
+      <strong>Not affiliated with Medicare, CMS, or any insurer.</strong> This is a personal demonstration project. Medicare figures change annually; answers reflect 2026 program amounts. Always confirm details at <a href="https://www.medicare.gov" target="_blank" rel="noopener">Medicare.gov</a> or 1-800-MEDICARE before making decisions.
+    </div>
+  </header>
+
+  <div class="chat-shell">
+    <div class="chat-bar"><span class="dot"></span> Medicare Questions Assistant</div>
+    <div class="stream" id="stream">
+      <div class="msg bot">
+        <div class="bubble">Hello — I can answer common questions about getting started with Medicare. Pick a question below, or type your own.</div>
+      </div>
+    </div>
+    <div class="prompt-zone">
+      <div class="prompt-label">Common questions</div>
+      <div class="chips" id="chips"></div>
+      <div class="input-row">
+        <input type="text" id="userInput" placeholder="Type a Medicare question…" autocomplete="off">
+        <button id="sendBtn">Ask</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="meta">
+    <h2>How this prototype is built</h2>
+    <p>Answers are <strong>not generated live by an AI model</strong>. Each is a pre-written, human-vetted entry tied to a published source — a deliberate control, since an incorrect Medicare answer carries real cost to a member. Incoming questions are matched to the knowledge base by keyword; when no answer clears the confidence threshold, the assistant <strong>escalates to a licensed human</strong> rather than guessing.</p>
+    <p>This mirrors how a process owner would scope such a tool: a defined intake, an explicit knowledge base, a control for low-confidence cases, and measurable outcomes.</p>
+    <div class="kpi-row">
+      <div class="kpi"><div class="n">Deflection</div><div class="l">% resolved without a human</div></div>
+      <div class="kpi"><div class="n">Accuracy</div><div class="l">answers vs. CMS source review</div></div>
+      <div class="kpi"><div class="n">Escalation</div><div class="l">% routed to a licensed agent</div></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   KNOWLEDGE BASE
+   Each entry: vetted answer + published source.
+   2026 figures sourced from CMS / Medicare.gov (Nov 2025 releases).
+   ============================================================ */
+const KB = [
+  {
+    q: "What are the parts of Medicare?",
+    keys: ["parts","part a","part b","part c","part d","abcd","what is medicare"],
+    a: "Medicare has four parts. Part A covers inpatient hospital, skilled nursing, hospice, and some home health care. Part B covers doctor visits, outpatient care, and preventive services. Part C (Medicare Advantage) is a private-plan alternative that bundles A and B, often with extra benefits. Part D covers prescription drugs.",
+    src: "Medicare.gov — What's Medicare?"
+  },
+  {
+    q: "When can I first sign up for Medicare?",
+    keys: ["when sign up","initial enrollment","first eligible","turning 65","iep","when can i enroll"],
+    a: "Most people sign up during their Initial Enrollment Period — a 7-month window that starts 3 months before the month you turn 65, includes your birthday month, and ends 3 months after. Signing up in the first 3 months avoids a gap, so coverage can begin the month you turn 65.",
+    src: "Medicare.gov — When to sign up"
+  },
+  {
+    q: "What does Part B cost in 2026?",
+    keys: ["part b cost","part b premium","b premium","cost of part b","monthly premium","deductible"],
+    a: "In 2026 the standard Part B premium is $202.90 per month, and the annual Part B deductible is $283. Higher-income beneficiaries pay more through an income-related adjustment (IRMAA) based on tax returns from two years earlier.",
+    src: "CMS — 2026 Medicare Parts A & B Premiums & Deductibles"
+  },
+  {
+    q: "Is Part A really free?",
+    keys: ["part a free","free part a","part a cost","part a premium","premium-free"],
+    a: "Most people pay no premium for Part A because they (or a spouse) paid Medicare taxes for at least 40 quarters of work. If you have fewer quarters, you can still buy Part A — in 2026 that runs $311 per month with 30–39 quarters, or $565 per month with fewer than 30. Part A also has a deductible of $1,736 per hospital benefit period in 2026.",
+    src: "CMS — 2026 Medicare Parts A & B Premiums & Deductibles"
+  },
+  {
+    q: "What happens if I sign up late?",
+    keys: ["late","penalty","missed enrollment","sign up late","late enrollment","miss the window"],
+    a: "If you delay Part B without other qualifying coverage, a late enrollment penalty adds 10% to your premium for each full 12-month period you could have enrolled — and it generally lasts as long as you have Part B. Part D has its own penalty if you go 63+ days without creditable drug coverage. A Special Enrollment Period can let you avoid these penalties.",
+    src: "Medicare.gov — Avoid late enrollment penalties"
+  },
+  {
+    q: "What's the difference between Medicare Advantage and Original Medicare?",
+    keys: ["advantage","original medicare","part c","difference between","medigap or advantage","ma plan"],
+    a: "Original Medicare is Parts A and B run by the federal government; you can add a separate Part D drug plan and a Medigap supplement. Medicare Advantage (Part C) is offered by private insurers, usually bundles drug coverage and extras like dental or vision, but typically uses provider networks and requires referrals or prior authorization. It's a trade-off between flexibility and bundled convenience.",
+    src: "Medicare.gov — Your coverage options"
+  },
+  {
+    q: "Do I need Part D if I don't take medications?",
+    keys: ["part d","drug coverage","prescription","need part d","dont take medication","drug plan"],
+    a: "It's usually wise to enroll in Part D (or have other creditable drug coverage) when first eligible, even with no current prescriptions. If you go 63 days or more without creditable coverage, a permanent late enrollment penalty is added to your future drug premium. Enrolling early protects against both unexpected prescriptions and that penalty.",
+    src: "Medicare.gov — Part D late enrollment penalty"
+  },
+  {
+    q: "Can I keep Medicare if I'm still working at 65?",
+    keys: ["still working","employer coverage","working at 65","keep my insurance","job insurance","delay medicare"],
+    a: "Often yes. If you have group health coverage through your own or a spouse's active employment, you may be able to delay Part B without penalty and use a Special Enrollment Period later. Rules differ by employer size, so confirm with your benefits administrator. Many people still take premium-free Part A even while working.",
+    src: "Medicare.gov — Working past 65"
+  },
+  {
+    q: "What is a Medigap (supplement) plan?",
+    keys: ["medigap","supplement","medsupp","gap plan","supplemental"],
+    a: "Medigap is private insurance that pairs with Original Medicare to help cover out-of-pocket costs like coinsurance and deductibles. The best time to buy is the 6-month Medigap Open Enrollment Period that begins when you're 65 and enrolled in Part B — during that window insurers can't deny you or charge more for health reasons.",
+    src: "Medicare.gov — How to compare Medigap policies"
+  },
+  {
+    q: "Does Medicare cover dental, vision, or hearing?",
+    keys: ["dental","vision","hearing","glasses","eye exam","teeth","hearing aid"],
+    a: "Original Medicare generally does not cover routine dental, vision, or hearing care, though it covers some medically necessary related services. Many Medicare Advantage plans include these extras, and standalone dental or vision plans are also available. Coverage varies widely, so check the specific plan's benefits.",
+    src: "Medicare.gov — What Medicare covers"
+  }
+];
+
+/* Escalation message for low-confidence / out-of-scope questions */
+const ESCALATE = {
+  esc: true,
+  a: "I'm not confident I have a vetted answer for that one. To make sure you get accurate information, I'd connect you with a licensed Medicare representative — or you can call 1-800-MEDICARE or visit Medicare.gov directly.",
+  src: "Escalation path — routed to licensed human"
+};
+
+/* ---------- Matching logic ---------- */
+function findAnswer(text) {
+  const t = text.toLowerCase();
+  let best = null, bestScore = 0;
+  KB.forEach(entry => {
+    let score = 0;
+    entry.keys.forEach(k => { if (t.includes(k)) score += k.split(" ").length; });
+    if (score > bestScore) { bestScore = score; best = entry; }
+  });
+  // Confidence threshold: require a real keyword match, else escalate.
+  if (best && bestScore >= 1) return best;
+  return ESCALATE;
+}
+
+/* ---------- Render ---------- */
+const stream = document.getElementById("stream");
+const chips = document.getElementById("chips");
+const input = document.getElementById("userInput");
+
+function addMsg(text, who, src, escalate) {
+  const msg = document.createElement("div");
+  msg.className = "msg " + who;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble" + (escalate ? " escalate" : "");
+  if (escalate) {
+    const tag = document.createElement("span");
+    tag.className = "esc-tag";
+    tag.textContent = "Low confidence — escalating";
+    bubble.appendChild(tag);
+  }
+  bubble.appendChild(document.createTextNode(text));
+  if (src) {
+    const s = document.createElement("span");
+    s.className = "src";
+    s.textContent = "Source: " + src;
+    bubble.appendChild(s);
+  }
+  msg.appendChild(bubble);
+  stream.appendChild(msg);
+  stream.scrollTop = stream.scrollHeight;
+}
+
+function ask(text) {
+  if (!text.trim()) return;
+  addMsg(text, "user");
+  const r = findAnswer(text);
+  setTimeout(() => addMsg(r.a, "bot", r.src, r.esc), 320);
+}
+
+KB.forEach(entry => {
+  const c = document.createElement("button");
+  c.className = "chip";
+  c.textContent = entry.q;
+  c.onclick = () => ask(entry.q);
+  chips.appendChild(c);
+});
+
+document.getElementById("sendBtn").onclick = () => {
+  ask(input.value);
+  input.value = "";
+};
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter") { ask(input.value); input.value = ""; }
+});
+</script>
+</body>
+</html>
